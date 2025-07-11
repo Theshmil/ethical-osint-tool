@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSINT Lookup Tool</title>
+<style>
+  body { margin:0; font-family:sans-serif; background:#111; color:#eee; display:flex; justify-content:center; align-items:center; height:100vh; }
+  .container { background:#222; padding:30px; border-radius:10px; width:90%; max-width:400px; box-shadow:0 0 10px rgba(0,0,0,0.7); text-align:center; }
+  h1 { margin-bottom:20px; }
+  input[type="text"] { width:90%; padding:10px; margin-bottom:15px; border:none; border-radius:5px; }
+  button { padding:10px 20px; border:none; background:#4CAF50; color:#fff; border-radius:5px; font-size:16px; cursor:pointer; }
+  #result { margin-top:20px; font-size:14px; color:#ccc; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>OSINT Lookup Tool</h1>
+    <input type="text" id="query" placeholder="Enter name or phone number" />
+    <br>
+    <button onclick="search()">Search</button>
+    <div id="result"></div>
+  </div>
+<script>
+function search() {
+  var q = document.getElementById('query').value.trim();
+  var resultDiv = document.getElementById('result');
+  if(q) {
+    resultDiv.innerHTML = "🔍 Searching public sources for: <b>" + q + "</b><br>(Demo only. No real lookup.)";
+  } else {
+    resultDiv.innerHTML = "❗ Please enter a name or phone number.";
+  }
+}
+</script>
+</body>
+</html>
