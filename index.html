@@ -3,62 +3,105 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Info Finder Tool</title>
+<title>Ethical OSINT Tools</title>
 <style>
   body {
-    margin: 0;
-    background: #000; /* Dark background */
-    color: #00ff00;   /* Green text */
+    background-color: #000;
+    color: #0f0;
     font-family: monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 50px 20px;
+    padding: 20px;
   }
-  h1 {
-    color: #00ff00;
-    margin-bottom: 30px;
-  }
+  h1 { color: #0f0; }
   input, button {
+    background: #000;
+    color: #0f0;
+    border: 1px solid #0f0;
     padding: 10px;
     margin: 5px;
-    border: 2px solid #00ff00;
-    background: #111;
-    color: #00ff00;
-    font-size: 16px;
-    border-radius: 5px;
-  }
-  button:hover {
-    background: #00ff00;
-    color: #000;
-    cursor: pointer;
+    font-family: monospace;
   }
   #result {
     margin-top: 20px;
-    font-size: 18px;
-    word-wrap: break-word;
+    white-space: pre-wrap;
+    text-align: left;
+    max-width: 600px;
   }
 </style>
 </head>
 <body>
+<h1>🛡️ Ethical OSINT Tools</h1>
 
-<h1>🛡️ Info Finder Tool</h1>
-<input type="text" id="queryInput" placeholder="Enter name or phone number">
-<button onclick="searchInfo()">Search</button>
+<label>Enter Email:</label><br>
+<input type="text" id="emailInput" placeholder="example@mail.com">
+<button onclick="validateEmail()">Validate Email</button><br><br>
+
+<label>Enter Phone Number:</label><br>
+<input type="text" id="phoneInput" placeholder="+1234567890">
+<button onclick="checkPhone()">Check Format</button><br><br>
+
+<label>Enter Domain:</label><br>
+<input type="text" id="domainInput" placeholder="example.com">
+<button onclick="lookupDomain()">WHOIS Lookup</button><br><br>
+
+<label>Enter IP Address:</label><br>
+<input type="text" id="ipInput" placeholder="8.8.8.8">
+<button onclick="lookupIP()">IP Lookup</button><br><br>
+
 <div id="result"></div>
 
 <script>
-function searchInfo() {
-  const query = document.getElementById('queryInput').value.trim();
-  const resultBox = document.getElementById('result');
-  if (query === '') {
-    resultBox.innerText = '⚠️ Please enter a name or number.';
-    return;
-  }
-  // Fake data for demo – real API cannot be used legally without consent
-  resultBox.innerText = "🔍 Searching for: " + query + "...\n\n✅ Name: John Doe\n📞 Number: +1 234 567 890\n📍 Location: Unknown\n📧 Email: johndoe@example.com";
+// Validate Email Format
+function validateEmail(){
+  const email = document.getElementById('emailInput').value;
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  document.getElementById('result').innerText = regex.test(email)
+    ? "✅ Email format looks valid."
+    : "❌ Invalid email format.";
+}
+
+// Check simple phone format
+function checkPhone(){
+  const phone = document.getElementById('phoneInput').value;
+  const regex = /^\+?\d{7,15}$/;
+  document.getElementById('result').innerText = regex.test(phone)
+    ? "✅ Phone number format looks valid."
+    : "❌ Invalid phone number format.";
+}
+
+// WHOIS lookup using free API
+function lookupDomain(){
+  const domain = document.getElementById('domainInput').value;
+  document.getElementById('result').innerText = "🔎 Fetching WHOIS info...";
+  fetch(`https://api.api-ninjas.com/v1/whois?domain=${domain}`, {
+    headers: {'X-Api-Key': 'YOUR_API_KEY'}
+  })
+  .then(response => response.json())
+  .then(data => {
+    if(data.domain_name)
+      document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+    else
+      document.getElementById('result').innerText = "❌ No WHOIS data found.";
+  })
+  .catch(err => document.getElementById('result').innerText = "⚠️ Error: " + err);
+}
+
+// IP lookup using free API
+function lookupIP(){
+  const ip = document.getElementById('ipInput').value;
+  document.getElementById('result').innerText = "🔎 Fetching IP info...";
+  fetch(`https://ipapi.co/${ip}/json/`)
+  .then(response => response.json())
+  .then(data => {
+    if(data.ip)
+      document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+    else
+      document.getElementById('result').innerText = "❌ No data found.";
+  })
+  .catch(err => document.getElementById('result').innerText = "⚠️ Error: " + err);
 }
 </script>
-
 </body>
 </html>
