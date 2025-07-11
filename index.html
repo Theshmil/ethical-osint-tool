@@ -3,104 +3,78 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ethical OSINT Tools</title>
+<title>Info Checker Tool</title>
 <style>
   body {
-    background-color: #000;
-    color: #0f0;
+    background: #000;
+    color: #00ff00;
     font-family: monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
   }
-  h1 { color: #0f0; }
+  h1 {
+    margin-bottom: 20px;
+  }
   input, button {
-    background: #000;
-    color: #0f0;
-    border: 1px solid #0f0;
+    background: #111;
+    color: #00ff00;
+    border: 1px solid #00ff00;
     padding: 10px;
-    margin: 5px;
     font-family: monospace;
+    font-size: 1em;
+    border-radius: 5px;
+    margin: 5px;
+  }
+  button {
+    cursor: pointer;
   }
   #result {
     margin-top: 20px;
-    white-space: pre-wrap;
-    text-align: left;
+    width: 90%;
     max-width: 600px;
+    background: #111;
+    padding: 10px;
+    border: 1px solid #00ff00;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  #about {
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #0f0;
   }
 </style>
 </head>
 <body>
-<h1>🛡️ Ethical OSINT Tools</h1>
-
-<label>Enter Email:</label><br>
-<input type="text" id="emailInput" placeholder="example@mail.com">
-<button onclick="validateEmail()">Validate Email</button><br><br>
-
-<label>Enter Phone Number:</label><br>
-<input type="text" id="phoneInput" placeholder="+1234567890">
-<button onclick="checkPhone()">Check Format</button><br><br>
-
-<label>Enter Domain:</label><br>
-<input type="text" id="domainInput" placeholder="example.com">
-<button onclick="lookupDomain()">WHOIS Lookup</button><br><br>
-
-<label>Enter IP Address:</label><br>
-<input type="text" id="ipInput" placeholder="8.8.8.8">
-<button onclick="lookupIP()">IP Lookup</button><br><br>
-
+<h1>🔍 Info Checker Tool</h1>
+<input type="text" id="query" placeholder="Enter domain e.g. example.com">
+<button onclick="search()">Search</button>
 <div id="result"></div>
-
+<div id="about">
+  ⚡ Made for ethical use only. Created by Theshmil.
+</div>
 <script>
-// Validate Email Format
-function validateEmail(){
-  const email = document.getElementById('emailInput').value;
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  document.getElementById('result').innerText = regex.test(email)
-    ? "✅ Email format looks valid."
-    : "❌ Invalid email format.";
-}
-
-// Check simple phone format
-function checkPhone(){
-  const phone = document.getElementById('phoneInput').value;
-  const regex = /^\+?\d{7,15}$/;
-  document.getElementById('result').innerText = regex.test(phone)
-    ? "✅ Phone number format looks valid."
-    : "❌ Invalid phone number format.";
-}
-
-// WHOIS lookup using free API
-function lookupDomain(){
-  const domain = document.getElementById('domainInput').value;
-  document.getElementById('result').innerText = "🔎 Fetching WHOIS info...";
-  fetch(`https://api.api-ninjas.com/v1/whois?domain=${domain}`, {
-    headers: {'X-Api-Key': 'YOUR_API_KEY'}
-  })
-  .then(response => response.json())
-  .then(data => {
-    if(data.domain_name)
-      document.getElementById('result').innerText = JSON.stringify(data, null, 2);
-    else
-      document.getElementById('result').innerText = "❌ No WHOIS data found.";
-  })
-  .catch(err => document.getElementById('result').innerText = "⚠️ Error: " + err);
-}
-
-// IP lookup using free API
-function lookupIP(){
-  const ip = document.getElementById('ipInput').value;
-  document.getElementById('result').innerText = "🔎 Fetching IP info...";
-  fetch(`https://ipapi.co/${ip}/json/`)
-  .then(response => response.json())
-  .then(data => {
-    if(data.ip)
-      document.getElementById('result').innerText = JSON.stringify(data, null, 2);
-    else
-      document.getElementById('result').innerText = "❌ No data found.";
-  })
-  .catch(err => document.getElementById('result').innerText = "⚠️ Error: " + err);
+async function search() {
+  const query = document.getElementById('query').value.trim();
+  const resultDiv = document.getElementById('result');
+  if (!query) {
+    resultDiv.textContent = 'Please enter something to search.';
+    return;
+  }
+  resultDiv.textContent = 'Searching...';
+  try {
+    const res = await fetch(`https://api.api-ninjas.com/v1/whois?domain=${encodeURIComponent(query)}`, {
+      headers: {'X-Api-Key': '0rVAUdQMKBb4GuM3sPXmyg==muuEM6mOr7BmV3Pm'}
+    });
+    if (!res.ok) throw new Error('API request failed');
+    const data = await res.json();
+    resultDiv.textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    resultDiv.textContent = 'Error: ' + e.message;
+  }
 }
 </script>
 </body>
